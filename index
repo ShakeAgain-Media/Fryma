@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fryma - Reporte de performance - Septiembre 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--red:#9A0000;--red-hot:#ED1B24;--ink:#141414;--body:#3A3A3A;--g1:#9E9E9E;--g2:#CCCCCC;--g3:#E6E6E6;
+      --paper:#FFFFFF;--shell:#F4F4F4;--up:#1B7A3D;--dn:#9A0000;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:"Montserrat",system-ui,sans-serif;background:var(--shell);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px 72px}
+.top{background:var(--ink);color:#fff;padding:26px 0 0}
+.top .wrap{padding-bottom:0}
+.top-row{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.wordmark{font-size:15px;font-weight:800;letter-spacing:.14em;color:#fff}
+.top-meta{text-align:right;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g1);line-height:1.9}
+.top-meta b{color:#fff;font-weight:600}
+.headline{margin-top:30px;padding-bottom:30px}
+.eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--red-hot);font-weight:700}
+.rule{width:62px;height:3px;background:var(--red-hot);margin-top:18px}
+.headline h1{font-size:clamp(26px,4.2vw,42px);font-weight:800;letter-spacing:-.025em;line-height:1.08;margin-top:14px;color:#fff;max-width:24ch}
+.headline h1 em{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:700;color:var(--g2)}
+.headline p{margin-top:16px;color:var(--g1);max-width:66ch;font-size:14px;line-height:1.65}
+.headline p b{color:#fff;font-weight:600}
+.hero-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#2C2C2C;border-top:1px solid #2C2C2C}
+.hs{background:var(--ink);padding:16px 0 20px;min-width:0}
+@media(max-width:820px){.hero-strip{grid-template-columns:repeat(2,1fr)}}
+.hs-l{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--g1);font-weight:600}
+.hs-v{font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-.03em;margin-top:7px;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.hs-d{font-size:10.5px;margin-top:7px;font-weight:700;letter-spacing:.04em;color:var(--g1)}
+
+.sec{margin-top:46px}
+.sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:14px;border-bottom:2px solid var(--ink);margin-bottom:22px;flex-wrap:wrap}
+.sec-head h2{font-size:14px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.sec-head span{font-size:12px;color:var(--g1);margin-left:auto;letter-spacing:.04em}
+.lead-in{font-size:13.5px;color:var(--body);line-height:1.65;max-width:78ch;margin-bottom:20px}
+.lead-in b{color:var(--ink);font-weight:700}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:1px;background:var(--g3);border:1px solid var(--g3)}
+.kpi{background:var(--paper);padding:20px}
+.kpi-l{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--g1);font-weight:600}
+.kpi-v{font-size:clamp(23px,2.4vw,30px);font-weight:800;letter-spacing:-.03em;margin-top:9px;line-height:1;font-variant-numeric:tabular-nums}
+.kpi-d{font-size:11px;margin-top:8px;font-weight:700;letter-spacing:.04em}
+.kpi-d small{font-weight:500;color:var(--g1)}
+.up{color:var(--up)}.dn{color:var(--dn)}.flat{color:var(--g1)}
+.kpi.hero{background:var(--ink)}.kpi.hero .kpi-l,.kpi.hero .kpi-d small{color:var(--g1)}.kpi.hero .kpi-v{color:#fff}
+.kpi.lead .kpi-v{color:var(--red)}
+
+.panel{background:var(--paper);border:1px solid var(--g3)}
+.panel-pad{padding:22px 24px}
+.panel+.panel{margin-top:16px}
+.ptitle{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;color:var(--ink);margin-bottom:16px}
+.ptitle.accent{color:var(--red)}
+
+.goal{margin-bottom:15px}.goal:last-child{margin-bottom:0}
+.goal-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;margin-bottom:6px;gap:12px;flex-wrap:wrap}
+.goal-lab span{font-weight:600;color:var(--g1);font-size:11.5px;font-variant-numeric:tabular-nums}
+.goal-track{height:9px;background:var(--g3);overflow:hidden;position:relative}
+.goal-bar{height:100%;background:var(--ink)}
+.goal-bar.red{background:var(--red)}
+.goal-bar.grey{background:var(--g1)}
+.goal-mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--paper);box-shadow:0 0 0 1px var(--ink)}
+.goal-note{font-size:10.5px;color:var(--g1);margin-top:6px}
+
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--g1);font-weight:700;text-align:right;
+   padding:13px 12px;border-bottom:1px solid var(--g3);white-space:nowrap;background:var(--paper)}
+th:first-child{text-align:left}
+td{padding:12px;border-bottom:1px solid #F2F2F2;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td:first-child{text-align:left;font-weight:600;white-space:normal;min-width:168px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#FAFAFA}
+tfoot td{font-weight:800;border-top:2px solid var(--ink);border-bottom:none;background:#FAFAFA}
+.nil{color:var(--g2)}
+.up-txt{color:var(--up);font-weight:700}.dn-txt{color:var(--dn);font-weight:700}.flat-txt{color:var(--g1);font-weight:700}
+.tag{display:inline-block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:3px 8px;border:1px solid var(--g2);color:var(--g1);border-radius:2px;margin-left:6px;white-space:nowrap}
+.tag.paused{border-color:var(--g1);color:var(--g1);background:#F2F2F2}
+.tag.active{border-color:var(--up);color:var(--up);background:#EAF4EE}
+.tag.test{border-color:var(--red);color:var(--red);background:#FBF3F3}
+.rk{color:var(--g2);font-weight:800;font-size:11px;text-align:right}
+table.ranked th.rk,table.ranked td.rk{min-width:0;width:30px;text-align:right;padding-right:4px;font-weight:800}
+table.ranked th:nth-child(2){text-align:left}
+table.ranked td:nth-child(2){text-align:left;font-weight:600;white-space:normal;min-width:124px}
+.tl{text-align:left!important;font-weight:500}
+th.tl{font-weight:700}
+.cifra{font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.destaque{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-style:italic}
+.sub{display:block;font-size:10.5px;color:var(--g1);font-weight:500;margin-top:2px}
+
+.chartbox{position:relative;height:300px}
+canvas{max-width:100%}
+.chartbox.tall{height:340px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.duo>*{min-width:0}
+.kpis>*,.gaps>*{min-width:0}
+@media(max-width:900px){.duo{grid-template-columns:1fr}}
+.note{font-size:11.5px;color:var(--g1);margin-top:12px;line-height:1.6}
+.note b{color:var(--body);font-weight:700}
+
+.read{margin-top:16px;background:var(--paper);border:1px solid var(--g3);border-left:3px solid var(--red);padding:16px 20px}
+.read-k{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--red);margin-bottom:8px}
+.read p{font-size:13.5px;line-height:1.62;color:var(--body)}
+.read p+p{margin-top:9px}
+.read b{color:var(--ink);font-weight:700}
+
+.alert{margin-top:16px;background:var(--paper);border-left:3px solid var(--g2);padding:14px 20px;display:flex;gap:14px;align-items:flex-start}
+.alert-k{font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--g1);white-space:nowrap;padding-top:2px}
+.alert-t{font-size:12.5px;color:var(--body);line-height:1.58}
+.alert-t b{font-weight:700;color:var(--ink)}
+@media(max-width:640px){.alert{flex-direction:column;gap:7px}}
+
+.funnel{padding:6px 2px 2px}
+.fstep{margin-bottom:24px}.fstep:last-child{margin-bottom:0}
+.fmeta{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:9px;flex-wrap:wrap}
+.fname{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--g1)}
+.fnum{font-size:clamp(19px,2vw,24px);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.fbar-track{height:13px;background:var(--g3);overflow:hidden}
+.fbar{height:100%}
+.fbar.f1{background:var(--g1)}.fbar.f2{background:var(--ink)}.fbar.f3{background:var(--red)}
+.frate{font-size:11.5px;color:var(--g1);margin-top:8px}
+.frate b{color:var(--ink);font-weight:700}
+
+.gaps{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--g3);border:1px solid var(--g3)}
+.gap{background:var(--paper);padding:17px 19px}
+.gap-k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--ink);margin-bottom:7px}
+.gap-t{font-size:12.5px;color:var(--body);line-height:1.56}
+
+.exec{background:var(--paper);border:1px solid var(--g3);border-top:3px solid var(--red);padding:26px 28px}
+.exec h3{font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.3;color:var(--ink);margin-bottom:16px}
+.exec h3 .destaque{color:var(--red)}
+.exec p{font-size:13.5px;line-height:1.68;color:var(--body)}
+.exec p+p{margin-top:11px}
+.exec b{color:var(--ink);font-weight:700}
+@media(max-width:640px){.exec{padding:20px}}
+
+.steps{margin-top:16px;padding:22px 24px;background:var(--paper);border:1px solid var(--g3);border-top:3px solid var(--ink)}
+.steps-k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);margin-bottom:4px}
+.steps-sub{font-size:12px;color:var(--g1);margin-bottom:12px}
+.step{display:flex;gap:14px;align-items:baseline;padding:12px 0;border-top:1px solid var(--g3);font-size:13.5px;line-height:1.55;color:var(--body)}
+.step-n{flex:0 0 22px;font-weight:800;color:var(--red)}
+.step-a{flex:0 0 118px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--ink)}
+.step-t{flex:1;color:var(--ink);font-weight:500}
+@media(max-width:640px){.step{flex-wrap:wrap;gap:8px}.step-a{flex:1 1 calc(100% - 36px)}.step-t{flex:1 1 100%}}
+
+.foot{margin-top:58px;padding-top:24px;border-top:1px solid var(--g2);display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--g1)}
+.foot b{color:var(--ink);font-weight:700}
+.foot-brand{display:flex;align-items:center;gap:16px}
+.foot-logo{height:42px;width:auto;display:block;opacity:.92}
+.foot-wordmark{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--ink)}
+.foot-right{text-align:right;line-height:1.9}
+@media(max-width:640px){.foot-right{text-align:left}}
+@media(max-width:640px){.kpi{padding:16px}th,td{padding:10px 9px}.chartbox{height:260px}.hs{padding:14px 0 16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{body{background:#fff}.sec{break-inside:avoid}}
+
+/* ---- v2: desplegables, propuestas, hoja de ruta ---- */
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:46px 0 14px}
+.toolbar h2{font-size:14px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.btn{font:inherit;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink);background:var(--paper);border:1px solid var(--ink);padding:9px 14px;cursor:pointer}
+.btn:hover{background:var(--ink);color:#fff}
+.btn:focus-visible,summary:focus-visible{outline:2px solid var(--red-hot);outline-offset:2px}
+details.acc{background:var(--paper);border:1px solid var(--g3);margin-bottom:10px}
+details.acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:18px 22px;flex-wrap:wrap}
+details.acc>summary::-webkit-details-marker{display:none}
+.acc-n{font-weight:800;color:var(--red);font-size:12px;letter-spacing:.1em}
+.acc-t{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;flex:1;min-width:180px}
+.acc-s{font-size:12px;color:var(--g1);font-weight:500;flex-basis:100%;padding-left:34px;margin-top:-6px}
+.acc-c{width:10px;height:10px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);transition:transform .2s;margin-left:auto;margin-right:4px}
+details.acc[open]>summary .acc-c{transform:rotate(-135deg)}
+details.acc[open]>summary{border-bottom:1px solid var(--g3)}
+.acc-b{padding:22px}
+.acc-b .panel{border:1px solid var(--g3)}
+.tag.media{border-color:var(--ink);color:var(--ink);background:#fff;margin-left:0}
+.tag.pause{border-color:var(--g1);color:#5E5E5E;background:#F2F2F2;margin-left:0}
+@media(max-width:640px){details.acc>summary{padding:16px}.acc-b{padding:14px}.acc-s{padding-left:0}}
+
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.cards>*{min-width:0}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+.pcard{background:var(--paper);border:1px solid var(--g3);border-top:3px solid var(--red);padding:22px 24px}
+.pcard-n{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--red)}
+.pcard h3{font-size:17px;font-weight:800;letter-spacing:-.015em;line-height:1.28;margin:8px 0 14px}
+.pk{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;color:var(--g1);margin-top:12px}
+.pk.prop{color:var(--red)}
+.pcard p{font-size:13px;line-height:1.6;color:var(--body);margin-top:4px}
+.pcard p b{color:var(--ink);font-weight:700}
+.pcard .prop-box{background:#FBF3F3;border-left:3px solid var(--red);padding:10px 14px;margin-top:6px}
+.pcard .prop-box p{margin:0;color:var(--ink);font-weight:500}
+
+.road{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--g3);border:1px solid var(--g3)}
+.road>*{min-width:0}
+@media(max-width:900px){.road{grid-template-columns:1fr}}
+.rcol{background:var(--paper);padding:20px 22px}
+.rcol-k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--red)}
+.rcol-d{font-size:12px;color:var(--g1);margin:3px 0 12px}
+.rcol ul{list-style:none}
+.rcol li{font-size:13px;line-height:1.55;color:var(--body);padding:9px 0;border-top:1px solid var(--g3)}
+.rcol li b{color:var(--ink);font-weight:700}
+.rcol li small{display:block;font-size:11px;color:var(--g1);margin-top:2px}
+
+.mini{font-size:12.5px;color:var(--body);line-height:1.6}
+.mini b{color:var(--ink)}
+.share{margin-bottom:14px}
+.share-lab{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;font-weight:700;margin-bottom:5px}
+.share-lab span{font-weight:600;color:var(--g1);font-variant-numeric:tabular-nums}
+@media print{details.acc>summary .acc-c{display:none}.toolbar .btn{display:none}}
+.duo>.panel+.panel{margin-top:0}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="wordmark">SHAKEAGAIN</div>
+      <div class="top-meta">Reporte mensual de medios<br><b>Septiembre 2026 &middot; mes cerrado</b></div>
+    </div>
+    <div class="headline">
+      <div class="eyebrow">Fryma &middot; Performance digital</div>
+      <div class="rule"></div>
+      <h1>Reporte de performance<br><em style="white-space:nowrap">Septiembre 2026</em></h1>
+      <p>El mes cerró con <b>93 contactos comerciales</b> desde Meta Ads, un <b>104,5%</b> del objetivo de 89. El <b>costo por lead fue de $9.150</b>, por encima de los $5.618 del plan. Identificamos tres factores que lo explican, uno de ellos una regla de puja que <b>ya fue retirada</b>, y armamos una hoja de ruta para octubre.</p>
+    </div>
+  </div>
+  <div class="wrap" style="padding-bottom:0">
+    <div class="hero-strip">
+      <div class="hs"><div class="hs-l">Leads</div><div class="hs-v">93</div><div class="hs-d">104,5% del objetivo</div></div>
+      <div class="hs"><div class="hs-l">Costo por lead</div><div class="hs-v">$9.150</div><div class="hs-d">+62,9% vs. objetivo</div></div>
+      <div class="hs"><div class="hs-l">Inversión Meta</div><div class="hs-v">$1.388.898</div><div class="hs-d">173,6% de lo asignado a Meta</div></div>
+      <div class="hs"><div class="hs-l">Personas alcanzadas</div><div class="hs-v">367.606</div><div class="hs-d">+25,8% vs. agosto</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="sec" style="margin-top:40px">
+    <div class="sec-head"><h2>Qué detectamos y qué proponemos</h2><span>Lo más importante del mes</span></div>
+    <div class="cards">
+
+      <article class="pcard">
+        <div class="pcard-n">Hallazgo 1 &middot; Costo por lead</div>
+        <h3>Una regla de puja sobre el tramo de 35 a 44 años encareció los leads</h3>
+        <div class="pk">Qué vimos</div>
+        <p>El 10/9 aplicamos un ajuste que subía un 50% la puja por ese tramo. Entre el 10 y el 30/9 absorbió el <b>52% del gasto</b> de la campaña y generó el <b>33% de los leads</b>, a <b>$14.936 por lead</b> contra $6.895 del resto de las edades. Como orden de magnitud, habrían sido cerca de <b>25 leads más</b> con el rendimiento del resto (estimación sobre muestra chica). El costo ya venía subiendo antes (cerca de $8.100 entre el 1 y el 9/9), así que no es la única causa.</p>
+        <div class="pk prop">Propuesta</div>
+        <div class="prop-box"><p><b>La regla ya fue retirada.</b> Medimos 14 días el costo por lead por edad para confirmar el efecto y decidir si corresponde algún otro ajuste.</p></div>
+      </article>
+
+      <article class="pcard">
+        <div class="pcard-n">Hallazgo 2 &middot; Piezas</div>
+        <h3>Las piezas llevan cuatro meses al aire y muestran desgaste</h3>
+        <div class="pk">Qué vimos</div>
+        <p>La frecuencia subió de 2,8 a <b>3,3</b>, los clics sobre impresiones bajaron de 1,40% a <b>1,24%</b> y la conversión del formulario cayó de 5,6% a <b>4,7%</b>. Las tres piezas son las mismas desde junio, y el costo por lead sube desde entonces ($4.427 &rarr; $9.150).</p>
+        <div class="pk prop">Propuesta</div>
+        <div class="prop-box"><p>Hacer un <b>recambio de piezas en la campaña de leads B2B que corre hoy</b>, para recuperar la respuesta del público.</p></div>
+      </article>
+
+      <article class="pcard">
+        <div class="pcard-n">Hallazgo 3 &middot; Contenido de marca</div>
+        <h3>El video &ldquo;Demanda de yogures vegetales&rdquo; tuvo muy buena respuesta</h3>
+        <div class="pk">Qué vimos</div>
+        <p><b>684.134 reproducciones pagas acumuladas al 7/10</b> (516.439 en septiembre), a cerca de $0,86 por reproducción. El cliente pidió más contenido de este estilo. Hoy aporta visibilidad, pero no está conectado con el formulario de leads.</p>
+        <div class="pk prop">Propuesta</div>
+        <div class="prop-box"><p><b>Replicar este contenido</b> como forma de iterar el perfil y el tipo de piezas, y reorientar a quienes miraron más de la mitad del video hacia el formulario de leads.</p></div>
+      </article>
+
+      <article class="pcard">
+        <div class="pcard-n">Hallazgo 4 &middot; Medición</div>
+        <h3>La landing sale a producción y tiene que estar medible desde el primer día</h3>
+        <div class="pk">Qué vimos</div>
+        <p>La nueva página fue aprobada y se estima que se active en los <b>próximos días</b>. Hoy la analítica del sitio registró una sola visita en septiembre, y de los 264 leads históricos solo 1 tiene estado comercial cargado.</p>
+        <div class="pk prop">Propuesta</div>
+        <div class="prop-box"><p><b>Etiquetar y validar la landing antes de activarla</b>, y usar la columna de estado de la planilla de leads para registrar la calificación comercial y medir costo por oportunidad.</p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Hoja de ruta propuesta</h2><span>Para validar con el equipo de Fryma</span></div>
+    <div class="alert" style="margin:0 0 16px;border-left-color:var(--up)">
+      <div class="alert-k" style="color:var(--up)">Ya implementado</div>
+      <div class="alert-t"><b>Regla de puja 35&ndash;44 retirada</b> en la campaña de leads. <b>Leads de Meta a una planilla de Google con automatización nativa</b>, en reemplazo del flujo anterior.</div>
+    </div>
+    <div class="road">
+      <div class="rcol">
+        <div class="rcol-k">Próximos días</div><div class="rcol-d">Estimado</div>
+        <ul>
+          <li><b>Etiquetar y validar la landing</b> y activarla.</li>
+          <li><b>Medir 14 días</b> el costo por lead por edad, ya sin la regla.</li>
+          <li><b>Confirmar con Fryma</b> la hoja de ruta y el reparto del presupuesto.</li>
+        </ul>
+      </div>
+      <div class="rcol">
+        <div class="rcol-k">Octubre</div><div class="rcol-d">Estimado</div>
+        <ul>
+          <li><b>Recambio de piezas</b> en la campaña de leads B2B actual.</li>
+          <li><b>Replicar el contenido tipo yogures</b> en la línea de marca.</li>
+          <li><b>Reactivar Google Ads</b> con la landing medible.<small>El plan de octubre asigna $0 a Google: implica reasignar presupuesto.</small></li>
+          <li><b>Panificadoras (B2B):</b> campaña pendiente de las piezas de diseño. Cuando se active, convive con la actual y se mide por separado.</li>
+        </ul>
+      </div>
+      <div class="rcol">
+        <div class="rcol-k">Más adelante</div><div class="rcol-d">A confirmar</div>
+        <ul>
+          <li><b>Revisión de cierre</b> de la audiencia similar, con un mes completo de datos.</li>
+          <li><b>México:</b> posible inicio de pauta, con foco en leads.<small>Se reporta con costo por lead propio, separado de Argentina.</small></li>
+          <li><b>Brasil:</b> en exploración, sin pauta por ahora.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Resultados del mes</h2><span>Septiembre vs. agosto &middot; Meta Ads</span></div>
+
+    <div class="kpis">
+      <div class="kpi hero"><div class="kpi-l">Leads generados</div><div class="kpi-v">93</div><div class="kpi-d dn">&minus;6,1% <small>vs. 99 en agosto</small></div></div>
+      <div class="kpi lead"><div class="kpi-l">Costo por lead</div><div class="kpi-v">$9.150</div><div class="kpi-d dn">+50,1% <small>vs. $6.097</small></div></div>
+      <div class="kpi"><div class="kpi-l">Inversión total</div><div class="kpi-v">$1.388.898</div><div class="kpi-d flat">+37,6% <small>vs. $1.009.614</small></div></div>
+      <div class="kpi"><div class="kpi-l">Conversión del formulario</div><div class="kpi-v">4,7%</div><div class="kpi-d dn">&minus;0,9 pts <small>vs. 5,6%</small></div></div>
+      <div class="kpi"><div class="kpi-l">Personas alcanzadas</div><div class="kpi-v">367.606</div><div class="kpi-d up">+25,8% <small>vs. 292.238</small></div></div>
+    </div>
+
+    <div class="panel panel-pad" style="margin-top:16px">
+      <div class="ptitle accent">Cumplimiento del plan de septiembre</div>
+      <div class="goal">
+        <div class="goal-lab">Leads <span>93 de 89 previstos &middot; 104,5%</span></div>
+        <div class="goal-track"><div class="goal-bar red" style="width:100%"></div><div class="goal-mark" style="left:95.7%"></div></div>
+        <div class="goal-note">La marca vertical señala el objetivo del plan.</div>
+      </div>
+      <div class="goal">
+        <div class="goal-lab">Inversión asignada a Meta <span>$1.388.898 de $800.000 &middot; 173,6%</span></div>
+        <div class="goal-track"><div class="goal-bar" style="width:100%"></div><div class="goal-mark" style="left:57.6%"></div></div>
+        <div class="goal-note">Con la pauta en buscadores sin inversión desde agosto, el presupuesto se concentró en Meta.</div>
+      </div>
+      <div class="goal">
+        <div class="goal-lab">Inversión sobre el presupuesto total <span>$1.388.898 de $1.500.000 &middot; 92,6%</span></div>
+        <div class="goal-track"><div class="goal-bar grey" style="width:92.6%"></div></div>
+      </div>
+    </div>
+
+    <div class="duo" style="margin-top:16px">
+      <div class="panel panel-pad"><div class="ptitle">Inversión y leads por mes</div><div class="chartbox"><canvas id="chMes"></canvas></div></div>
+      <div class="panel panel-pad"><div class="ptitle">Costo por lead desde junio</div><div class="chartbox"><canvas id="chCpl"></canvas></div></div>
+    </div>
+    <p class="note">En julio funcionó además una campaña puntual de evento, con 182 contactos a $1.516, que no se incluye en la serie por ser excepcional.</p>
+
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-pad" style="padding-bottom:0"><div class="ptitle accent">Qué explica el costo por lead</div></div>
+      <div class="tbl-scroll"><table>
+        <thead><tr><th>Factor</th><th class="tl">Qué se observó</th></tr></thead>
+        <tbody>
+          <tr><td>Regla de puja 35&ndash;44</td><td class="tl" style="white-space:normal">Con la regla, ese tramo absorbió el 52% del gasto y el 33% de los leads: $14.936 por lead contra $6.895 del resto de las edades.</td></tr>
+          <tr><td>Desgaste de las piezas</td><td class="tl" style="white-space:normal">Frecuencia de 2,8 a 3,3, clics sobre impresiones de 1,40% a 1,24% y conversión de 5,6% a 4,7%, con las mismas piezas desde junio.</td></tr>
+          <tr><td>Audiencia nueva</td><td class="tl" style="white-space:normal">La audiencia similar arrancó en septiembre: $247.028 y 16 leads a $15.439, contra $7.843 de la audiencia consolidada.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="panel-pad" style="padding-top:0"><p class="note">La regla rige desde el 10/9 y la muestra es chica (66 leads en ese período). Antes de la regla el costo ya había subido a cerca de $8.100 por lead, por lo que los otros dos factores también influyen.</p></div>
+    </div>
+
+    <div class="read">
+      <div class="read-k">Lectura</div>
+      <p>El volumen se cumplió y el costo no: en la línea de leads se invirtieron <b>$850.906 contra $500.000 previstos</b> (170%), con leads apenas por encima del objetivo. La línea de contenido de marca tuvo su mejor mes, con el doble de alcance, y la pauta en buscadores sigue sin inversión desde agosto, a la espera de la nueva landing.</p>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div class="foot-brand">
+      <img class="foot-logo" src="data:image/png;base64,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" alt="Fryma">
+      <div class="foot-wordmark">SHAKEAGAIN</div>
+    </div>
+    <div class="foot-right">
+      <b>Reporte mensual de performance</b> &middot; Septiembre 2026 (mes cerrado)<br>
+      Datos de Meta Ads &middot; Google Ads sin inversión desde agosto &middot; Comparativa vs. agosto 2026 &middot; Moneda ARS
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  var RED="#9A0000", INK="#141414", G1="#9E9E9E", G2="#CCCCCC", G3="#E6E6E6";
+  var charts=[];
+  function n0(v){ return new Intl.NumberFormat("es-AR",{maximumFractionDigits:0}).format(v); }
+  function ars(v){ return "$"+n0(v); }
+
+  if(typeof Chart === "undefined"){ return; }
+  Chart.defaults.font.family = "Montserrat, sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = INK;
+  function mk(id,cfg){ var c=new Chart(document.getElementById(id),cfg); charts.push(c); return c; }
+  var leg={position:"bottom", labels:{boxWidth:10,boxHeight:10,padding:12}};
+
+  mk("chMes",{
+    data:{labels:["Agosto","Septiembre"],datasets:[
+      {type:"bar",label:"Generación de leads",data:[603593,850906],backgroundColor:RED,yAxisID:"y",borderRadius:0,stack:"inv"},
+      {type:"bar",label:"Contenido de marca",data:[276157,537992],backgroundColor:G1,yAxisID:"y",borderRadius:0,stack:"inv"},
+      {type:"bar",label:"Tráfico al sitio",data:[129863,0],backgroundColor:G2,yAxisID:"y",borderRadius:0,stack:"inv"},
+      {type:"line",label:"Leads",data:[99,93],borderColor:INK,backgroundColor:INK,yAxisID:"y1",tension:.3,pointRadius:5,borderWidth:2.5}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:leg,tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+(c.dataset.type==="line"?n0(c.parsed.y)+" leads":ars(c.parsed.y));}}}},
+      scales:{y:{stacked:true,position:"left",grid:{color:"#F0F0F0"},ticks:{callback:function(v){return "$"+(v/1000000).toFixed(1)+"M";}}},
+        y1:{position:"right",beginAtZero:true,suggestedMax:120,grid:{drawOnChartArea:false},ticks:{callback:function(v){return n0(v);}}},
+        x:{stacked:true,grid:{display:false}}}}
+  });
+
+  mk("chCpl",{type:"bar",
+    data:{labels:["Junio","Julio","Agosto","Septiembre"],datasets:[{label:"Costo por lead",data:[4427,5523,6097,9150],backgroundColor:[G3,G2,G1,RED],borderRadius:0}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return "Costo por lead: "+ars(c.parsed.y);}}}},
+      scales:{y:{beginAtZero:true,grid:{color:"#F0F0F0"},ticks:{callback:function(v){return "$"+n0(v);}}},x:{grid:{display:false}}}}
+  });
+
+})();
+</script>
+</body>
+</html>
